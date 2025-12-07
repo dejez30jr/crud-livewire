@@ -17,6 +17,7 @@
         <a href="/" class="text-blue-600">Home</a>
         <a href="/about" class="text-blue-600">About</a>
         <a href="/kontak" class="text-blue-600">Form</a>
+        <a href="/kasir-traning" class="text-blue-600">traning kasir" an</a>
     </nav>
 
 <div>

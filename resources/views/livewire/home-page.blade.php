@@ -27,6 +27,7 @@
                     <td class="py-3 px-4">Rp {{ number_format($p->price) }}</td>
                     <td>
                         <a wire:click="move({{ $p->id }})">apus</a>
+                        <a wire:navigate href="{{ route('product.edit', $p->id) }}">Edit</a>
                     </td>
                 </tr>
                 @endforeach
