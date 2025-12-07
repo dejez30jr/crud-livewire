@@ -5,53 +5,79 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Product;
 
-class KasirPage extends Component
-{
+class KasirPage extends Component {
+
     public $products = [];
     public $cart = [];
 
     public function mount()
     {
+        // ambil produk
         $this->products = Product::orderBy('id')->get()->toArray();
+
+        // load cart dari session jika ada
         $this->cart = session('cart', []);
     }
 
-    private function saveCart($cart)
+    // tambahkan produk ke cart
+    public function addToCart($id)
     {
+        $id = (int) $id;
+        $product = Product::find($id);
+        if (! $product) return;
+        
+
+        $cart = session('cart', $this->cart);
+
+        if (isset($cart[$id])) {
+            $cart[$id]['qty']++;
+        } else {
+            $cart[$id] = [
+                'id' => $product->id,
+                'title' => $product->title,
+                'price' => (int) $product->price,
+                'qty' => 1,
+            ];
+        }
+
         $this->cart = $cart;
         session(['cart' => $cart]);
     }
 
-    public function addToCart($id)
+    public function increase($id)
     {
-        if (! $product = Product::find((int) $id)) return;
-
-        $cart = $this->cart;
-        $cart[$id] = [
-            'id'    => $product->id,
-            'title' => $product->title,
-            'price' => (int) $product->price,
-            'qty'   => ($cart[$id]['qty'] ?? 0) + 1,
-        ];
-
-        $this->saveCart($cart);
+        $id = (int) $id;
+        $cart = session('cart', $this->cart);
+        if (isset($cart[$id])) {
+            $cart[$id]['qty']++;
+            $this->cart = $cart;
+            session(['cart' => $cart]);
+        }
     }
 
-    public function updateQty($id, $delta)
+    public function decrease($id)
     {
-        $cart = $this->cart;
+        $id = (int) $id;
+        $cart = session('cart', $this->cart);
         if (isset($cart[$id])) {
-            $cart[$id]['qty'] += $delta;
-            if ($cart[$id]['qty'] <= 0) unset($cart[$id]);
-            $this->saveCart($cart);
+            $cart[$id]['qty']--;
+            if ($cart[$id]['qty'] <= 0) {
+                unset($cart[$id]);
+            }
+            $this->cart = $cart;
+            session(['cart' => $cart]);
         }
     }
 
     public function remove($id)
     {
-        $cart = $this->cart;
-        unset($cart[$id]);
-        $this->saveCart($cart);
+        $id = (int) $id;
+        $cart = session('cart', $this->cart);
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            $this->cart = $cart;
+            session(['cart' => $cart]);
+        }
     }
 
     public function clearCart()
@@ -60,13 +86,20 @@ class KasirPage extends Component
         session()->forget('cart');
     }
 
+    // computed property untuk total
     public function getTotalProperty()
     {
-        return collect($this->cart)->sum(fn($it) => $it['price'] * $it['qty']);
+        $total = 0;
+        foreach ($this->cart as $it) {
+            $total += $it['price'] * $it['qty'];
+        }
+        return $total;
     }
 
     public function render()
     {
-        return view('livewire.kasir-page')->layout('components.layouts.app');
+        return view('livewire.kasir-page')
+            ->layout('components.layouts.app');
     }
+
 }
