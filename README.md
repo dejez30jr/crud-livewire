@@ -1,3 +1,168 @@
+🛒 Livewire Kasir – Penjelasan Lengkap Setiap Baris Kode
+
+Di bawah ini adalah penjelasan lengkap fungsi dari setiap baris kode pada komponen Livewire kasir.
+
+📌 Full Code + Penjelasan
+public $cart = [];
+public $products = [];
+
+
+public $cart → tempat menyimpan item belanja (keranjang).
+
+public $products → tempat menyimpan daftar produk dari database.
+
+Keduanya dibuat public supaya bisa dipakai oleh Blade.
+
+🔵 mount(): dijalankan sekali saat komponen pertama kali di-load
+public function mount() {
+    $this->products = Product::all();
+    // jangan toArray()
+    $this->cart = session('cart', []);
+}
+
+
+Penjelasan:
+
+mount() adalah fungsi lifecycle Livewire yang dijalankan sekali saja di awal.
+
+Product::all() → ambil semua produk dari database.
+
+Tidak pakai ->toArray() agar tetap berupa objek (lebih mudah dipakai).
+
+session('cart', []) → ambil cart dari session, kalau belum ada → isi array kosong.
+
+🔵 getCart(): mengambil isi cart dari session
+private function getCart() {
+    return session('cart', $this->cart );
+}
+
+
+Fungsi ini mengambil cart yang tersimpan di session.
+
+Kalau session kosong, dia pakai $this->cart.
+
+🔵 saveCart(): simpan cart ke session + property Livewire
+private function saveCart($cart) {
+    $this->cart = $cart;
+    session(['cart' => $cart]);
+}
+
+
+$this->cart = $cart → supaya Livewire langsung update tampilan.
+
+session(['cart' => $cart]) → supaya cart tidak hilang saat refresh halaman.
+
+🔵 add(): menambahkan produk ke cart
+public function add($id) {
+    if (! $product = Product::find((int)$id)) return;
+
+    $cart = $this->getCart();
+
+    $cart[$id] = [
+        'id'    => $product->id,
+        'title' => $product->title,
+        'price' => (int)$product->price,
+        'qty'   => ($cart[$id]['qty'] ?? 0) + 1,
+    ];
+
+    $this->saveCart($cart);
+}
+
+
+Penjelasan:
+
+Product::find((int)$id) → cari produk berdasarkan ID, pastikan ID berupa angka.
+
+Kalau produk tidak ditemukan → langsung return.
+
+Ambil cart saat ini.
+
+$cart[$id] = [...] → simpan produk ke dalam cart.
+
+( $cart[$id]['qty'] ?? 0 ) + 1 →
+artinya:
+
+kalau sudah pernah ada → tambah quantity
+
+kalau belum pernah ada → quantity mulai dari 1
+
+Terakhir simpan kembali cart yang sudah diperbarui.
+
+🔵 updateQty(): menambah atau mengurangi quantity
+public function updateQty($id, $delta) {
+    $cart = $this->getCart();
+    if (isset($cart[$id])) {
+        $cart[$id]['qty'] += $delta;
+        if ($cart[$id]['qty'] <= 0) unset($cart[$id]);
+        $this->saveCart($cart);
+    }
+}
+
+
+Penjelasan:
+
+$delta bisa +1 atau -1.
+
+Update jumlah produk.
+
+Jika qty jadi 0 atau minus → produk otomatis dihapus.
+
+Simpan ulang cart.
+
+🔵 remove(): menghapus 1 item dari cart
+public function remove($id) {
+    $cart = $this->getCart();
+    unset($cart[$id]);
+    $this->saveCart($cart);
+}
+
+
+Langsung menghapus item berdasarkan ID.
+
+🔵 clearCart(): menghapus seluruh isi cart
+public function clearCart() {
+    $this->cart = [];
+    session()->forget('cart');
+}
+
+
+Reset cart jadi array kosong.
+
+Hapus dari session supaya benar-benar bersih.
+
+🔵 getTotalProperty(): total harga otomatis
+public function getTotalProperty() {
+    return collect($this->cart)
+        ->sum(fn($it) => $it['price'] * $it['qty']);
+}
+
+
+Penjelasan:
+
+getTotalProperty() adalah Computed Property, diakses sebagai $this->total.
+
+Hitung total dengan cara:
+
+price * qty
+
+lalu dijumlahkan semuanya (sum()).
+
+🔵 render(): menampilkan view
+public function render() {
+    return view('livewire.kasir-traning', [
+        'cart' => $this->cart,
+    ])
+    ->layout('components.layouts.app');
+}
+
+
+render() memutuskan Blade mana yang ditampilkan.
+
+Mengirim variable $cart ke view.
+
+->layout() digunakan agar memakai layout utama.
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
