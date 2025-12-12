@@ -10,37 +10,37 @@ class KasirTraning extends Component {
     public $cart = [];
     public $products = [];
 
-    public function mount() {
+    public function mount(){
         $this->products = Product::all();
-        // jangan toArray()
-        $this->cart = session( 'cart', [] );
+        $this->cart = session('cart', []);
     }
 
-    private function getCart() {
-        return session( 'cart', $this->cart );
+    private function getCart(){
+       return session('cart', $this->cart);
     }
 
-    private function saveCart( $cart ) {
+    private function savecart($cart){
         $this->cart = $cart;
-        session( [ 'cart' => $cart ] );
+        session(['cart' =>$cart]);
     }
 
-    // tambah produk
-
-    public function add( $id ) {
-        if ( ! $product = Product::find( ( int ) $id ) ) return;
+    public function add($id){
+        if(! $product = Product::find($id)) return;
 
         $cart = $this->getCart();
-
+        
         $cart[ $id ] = [
-            'id'    => $product->id,
-            'title' => $product->title,
-            'price' => ( int ) $product->price,
-            'qty'   => ( $cart[ $id ][ 'qty' ] ?? 0 ) + 1,
+            
+           'id' => $product->id,
+           'title' => $product->title,
+           'price' => $product->price,
+           'qty' => ($cart[$id] ['qty'] ?? 0) + 1, 
         ];
-
+ 
         $this->saveCart( $cart );
+
     }
+
 
     // update qty ( +1 atau -1 )
 
