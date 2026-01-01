@@ -5,10 +5,9 @@ namespace App\Livewire;
 use App\Models\Product;
 use Livewire\Component;
 
-class Kontak extends Component {
+class Create extends Component {
     public function render() {
-        return view( 'livewire.kontak' )
-        ->layout( 'components.layouts.app' );
+        return view( 'livewire.create' );
     }
 
     public $title;

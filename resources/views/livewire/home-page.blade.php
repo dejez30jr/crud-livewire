@@ -2,12 +2,12 @@
 
     <h1 class="text-3xl font-bold mb-2">Home Page</h1>
     <p class="text-gray-600 mb-6">
-        Selamat datang di website sederhana dengan Livewire 🔥
+        Selamat traning kasir livewire sederhana dz
     </p>
 
-    <a href="/about"
+    <a href="/create"
        class="inline-block mb-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-        Pergi ke Halaman About
+        buat data produk
     </a>
 
     {{-- TABLE DATA --}}
@@ -17,6 +17,7 @@
                 <tr>
                     <th class="py-3 px-4 font-semibold text-gray-700">Title</th>
                     <th class="py-3 px-4 font-semibold text-gray-700">Price</th>
+                    <th class="py-3 px-4 font-semibold text-gray-700">aksi</th>
                 </tr>
             </thead>
 

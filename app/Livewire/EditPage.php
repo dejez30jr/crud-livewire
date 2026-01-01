@@ -24,23 +24,20 @@ class EditPage extends Component
 
         public function update()
         {
-            $this->validate([
+            $validated = $this->validate([
                 'title' => 'required|unique:products,title,' . $this->productId,
                 'price' => 'required|numeric',
             ]);
 
             $product = Product::find($this->productId);
 
-            $product->update([
-                'title' => $this->title,
-                'price' => $this->price
-            ]);
+            $product->update($validated);
 
             session()->flash('success', 'Data berhasil diperbarui!');
         }
 
         public function render()
         {
-            return view('livewire.edit-page')->layout('components.layouts.app');
+            return view('livewire.edit-page');
         }
 }

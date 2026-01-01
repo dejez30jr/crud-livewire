@@ -9,8 +9,7 @@ class HomePage extends Component {
     public function render() {
         return view( 'livewire.home-page', [
             'produk' => Product::all()
-        ] )
-        ->layout( 'components.layouts.app' );
+        ] );
     }
 
     

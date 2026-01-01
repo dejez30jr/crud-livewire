@@ -1,9 +1,9 @@
+
 <div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6 mt-10">
 
     <h1 class="text-3xl font-bold mb-2">Form</h1>
     <p class="text-gray-600 mb-6">
-        Selamat datang di website sederhana dengan Livewire 🔥  
-        Silakan isi form di bawah ini untuk menambah data baru.
+       tambah data produk melalui form dibawah ini
     </p>
 
     {{-- Alert sukses --}}
